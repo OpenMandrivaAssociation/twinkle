@@ -1,6 +1,8 @@
 %define name	twinkle
 %define version	1.0
-%define release %mkrel 1
+%define release %mkrel 2
+
+%define _requires_exceptions libresolv.so.2
 
 Name: 	 	%{name}
 Summary: 	Voice Over IP phone using SIP for QT
@@ -18,6 +20,7 @@ BuildRequires:	qt3-devel
 BuildRequires:	libsndfile-devel
 BuildRequires:	speex-devel
 BuildRequires:	boost-devel
+BuildRequires:	libzrtpcpp-devel
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
@@ -28,7 +31,7 @@ a network using a SIP proxy to route your calls.
 %setup -q
 
 %build
-%configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --without-kde
+%configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --with-zrtp --without-kde
 %make
 										
 %install
