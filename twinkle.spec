@@ -1,6 +1,6 @@
 %define name	twinkle
 %define version	1.0
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define _requires_exceptions libresolv.so.2
 
@@ -41,20 +41,20 @@ rm -rf $RPM_BUILD_ROOT
 #menu
 mkdir -p $RPM_BUILD_ROOT%{_menudir}
 cat << EOF > $RPM_BUILD_ROOT%{_menudir}/%{name}
-?package(%{name}): command="%{name}" icon="%{name}.png" needs="x11" title="Twinkle" longtitle="SIP phone for KDE" section="More Applications/Communications" xdg="true"
+?package(%{name}): command="%{name}" icon="%{name}.png" needs="x11" title="Twinkle" longtitle="SIP phone" section="More Applications/Communications" xdg="true"
 EOF
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
 cat > $RPM_BUILD_ROOT%{_datadir}/applications/mandriva-%{name}.desktop << EOF
 [Desktop Entry]
-Name=%{title}
-Comment=%{summary}
+Name=Twinkle
+Comment=SIP phone
 Exec=%{_bindir}/%{name} 
 Icon=%{name}
 Terminal=false
 Type=Application
 StartupNotify=true
-Categories=KDE;QT;AudioVideo;Network;Telephony;X-MandrivaLinux-MoreApplications-Communications;
+Categories=QT;AudioVideo;Network;Telephony;X-MandrivaLinux-MoreApplications-Communications;
 EOF
 
 #icons
