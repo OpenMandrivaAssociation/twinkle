@@ -1,5 +1,5 @@
 %define name	twinkle
-%define version	1.0.1
+%define version	1.1
 %define release %mkrel 1
 
 %define _requires_exceptions libresolv.so.2
@@ -38,25 +38,6 @@ a network using a SIP proxy to route your calls.
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
 
-#menu
-mkdir -p $RPM_BUILD_ROOT%{_menudir}
-cat << EOF > $RPM_BUILD_ROOT%{_menudir}/%{name}
-?package(%{name}): command="%{name}" icon="%{name}.png" needs="x11" title="Twinkle" longtitle="SIP phone" section="More Applications/Communications" xdg="true"
-EOF
-
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-cat > $RPM_BUILD_ROOT%{_datadir}/applications/mandriva-%{name}.desktop << EOF
-[Desktop Entry]
-Name=Twinkle
-Comment=SIP phone
-Exec=%{_bindir}/%{name} 
-Icon=%{name}
-Terminal=false
-Type=Application
-StartupNotify=true
-Categories=QT;AudioVideo;Network;Telephony;X-MandrivaLinux-MoreApplications-Communications;
-EOF
-
 #icons
 mkdir -p $RPM_BUILD_ROOT/%_liconsdir
 cp src/gui/images/twinkle48.png $RPM_BUILD_ROOT/%_liconsdir/%name.png
@@ -82,7 +63,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/%name
 %{_datadir}/%name
 %{_datadir}/applications/mandriva-%name.desktop
-%{_menudir}/%name
 %{_liconsdir}/%name.png
 %{_iconsdir}/%name.png
 %{_miconsdir}/%name.png
