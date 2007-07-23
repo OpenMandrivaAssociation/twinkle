@@ -21,6 +21,7 @@ BuildRequires:	libsndfile-devel
 BuildRequires:	speex-devel
 BuildRequires:	boost-devel
 BuildRequires:	libzrtpcpp-devel
+BuildRequires:	desktop-file-utils
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
@@ -46,6 +47,11 @@ cp src/gui/images/twinkle32.png $RPM_BUILD_ROOT/%_iconsdir/%name.png
 mkdir -p $RPM_BUILD_ROOT/%_miconsdir
 cp src/gui/images/twinkle16.png $RPM_BUILD_ROOT/%_miconsdir/%name.png
 
+mkdir -p %{buildroot}%{_datadir}/applications
+desktop-file-install --vendor="" \
+	--dir %{buildroot}%{_datadir}/applications/ \
+	twinkle.desktop
+
 %find_lang %name
 
 %clean
@@ -62,9 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS ChangeLog NEWS README THANKS
 %{_bindir}/%name
 %{_datadir}/%name
-%{_datadir}/applications/mandriva-%name.desktop
+%{_datadir}/applications/*.desktop
 %{_liconsdir}/%name.png
 %{_iconsdir}/%name.png
 %{_miconsdir}/%name.png
-
-
