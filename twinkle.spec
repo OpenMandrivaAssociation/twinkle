@@ -1,6 +1,6 @@
 %define name	twinkle
 %define version	1.1
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define _requires_exceptions libresolv.so.2
 
@@ -22,6 +22,7 @@ BuildRequires:	speex-devel
 BuildRequires:	boost-devel
 BuildRequires:	libzrtpcpp-devel
 BuildRequires:	desktop-file-utils
+BuildRequires:	alsa-lib-devel
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
