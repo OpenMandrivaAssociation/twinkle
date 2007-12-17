@@ -13,7 +13,6 @@ Source:		http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.b
 URL:		http://www.xs4all.nl/~mfnboer/twinkle/
 License:	GPL
 Group:		Communications
-BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	libCommonC++-devel >= 1.3.0
 BuildRequires:	ccrtp-devel >= 1.3.4
 BuildRequires:	qt3-devel
