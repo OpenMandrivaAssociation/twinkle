@@ -33,6 +33,7 @@ a network using a SIP proxy to route your calls.
 %setup -q
 
 %build
+export PATH=$PATH:%{_prefix}/lib/qt3/bin
 %configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --with-zrtp --without-kde
 %make
 										
