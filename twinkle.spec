@@ -1,6 +1,9 @@
+# build with KDE address book support?
+%define kde	1
+
 %define name	twinkle
 %define version	1.1
-%define release %mkrel 3
+%define release %mkrel 4
 
 %define _requires_exceptions libresolv.so.2
 
@@ -23,6 +26,10 @@ BuildRequires:	boost-devel
 BuildRequires:	libzrtpcpp-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	alsa-lib-devel
+%if %kde
+BuildRequires:	kdelibs-common
+BuildRequires:	kdepim-devel
+%endif
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
@@ -34,7 +41,11 @@ a network using a SIP proxy to route your calls.
 
 %build
 export PATH=$PATH:%{_prefix}/lib/qt3/bin
+%if %kde
+%configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --with-zrtp --with-kde
+%else
 %configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --with-zrtp --without-kde
+%endif
 %make
 										
 %install
