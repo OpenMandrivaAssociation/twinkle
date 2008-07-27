@@ -2,17 +2,17 @@
 %define kde	1
 
 %define name	twinkle
-%define version	1.1
-%define release %mkrel 4
+%define version	1.2
+%define release %mkrel 1
 
-%define _requires_exceptions libresolv.so.2
+#define _requires_exceptions libresolv.so.2
 
 Name: 	 	%{name}
 Summary: 	Voice Over IP phone using SIP for QT
 Version: 	%{version}
 Release: 	%{release}
 
-Source:		http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.bz2
+Source:		http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.gz
 URL:		http://www.xs4all.nl/~mfnboer/twinkle/
 License:	GPL
 Group:		Communications
@@ -40,17 +40,16 @@ a network using a SIP proxy to route your calls.
 %setup -q
 
 %build
-export PATH=$PATH:%{_prefix}/lib/qt3/bin
 %if %kde
-%configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --with-zrtp --with-kde
+%configure_kde3 --with-zrtp --with-kde
 %else
-%configure2_5x --with-qt-libraries=%{_prefix}/lib/qt3/%{_lib} --with-zrtp --without-kde
+%configure_kde3 --with-zrtp --without-kde
 %endif
 %make
 										
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall
+%makeinstall_std
 
 #icons
 mkdir -p $RPM_BUILD_ROOT/%_liconsdir
@@ -60,9 +59,9 @@ cp src/gui/images/twinkle32.png $RPM_BUILD_ROOT/%_iconsdir/%name.png
 mkdir -p $RPM_BUILD_ROOT/%_miconsdir
 cp src/gui/images/twinkle16.png $RPM_BUILD_ROOT/%_miconsdir/%name.png
 
-mkdir -p %{buildroot}%{_datadir}/applications
+mkdir -p %{buildroot}%{_kde3_datadir}/applications
 desktop-file-install --vendor="" \
-	--dir %{buildroot}%{_datadir}/applications/ \
+	--dir %{buildroot}%{_kde3_datadir}/applications/ \
 	twinkle.desktop
 
 %find_lang %name
@@ -83,9 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog NEWS README THANKS
-%{_bindir}/%name
-%{_datadir}/%name
-%{_datadir}/applications/*.desktop
+%{_kde3_bindir}/%name
+%{_kde3_datadir}/%name
+%{_kde3_datadir}/applications/*.desktop
 %{_liconsdir}/%name.png
 %{_iconsdir}/%name.png
 %{_miconsdir}/%name.png
