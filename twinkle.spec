@@ -20,6 +20,7 @@ BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	libCommonC++-devel >= 1.3.0
 BuildRequires:	ccrtp-devel >= 1.3.4
 BuildRequires:	qt3-devel
+BuildRequires:	qt4-linguist
 BuildRequires:	libsndfile-devel
 BuildRequires:	speex-devel
 BuildRequires:	boost-devel
