@@ -3,7 +3,7 @@
 
 %define name	twinkle
 %define version	1.3.1
-%define release %mkrel 1
+%define release %mkrel 2
 
 #define _requires_exceptions libresolv.so.2
 
