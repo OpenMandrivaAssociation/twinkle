@@ -27,6 +27,7 @@ BuildRequires:	boost-devel
 BuildRequires:	libzrtpcpp-devel
 BuildRequires:	desktop-file-utils
 BuildRequires:	alsa-lib-devel
+BuildRequires:	file-devel
 %if %kde
 BuildRequires:	kdelibs-common
 BuildRequires:	kdepim-devel
