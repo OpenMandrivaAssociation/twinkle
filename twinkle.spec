@@ -3,9 +3,9 @@
 
 %define name	twinkle
 %define version	1.3.1
-%define release %mkrel 2
+%define release %mkrel 3
 
-#define _requires_exceptions libresolv.so.2
+%define _requires_exceptions libresolv.so.2
 
 Name: 	 	%{name}
 Summary: 	Voice Over IP phone using SIP for QT
@@ -14,13 +14,12 @@ Release: 	%{release}
 
 Source:		http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.gz
 URL:		http://www.xs4all.nl/~mfnboer/twinkle/
-License:	GPL
+License:	GPLv2+
 Group:		Communications
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	libCommonC++-devel >= 1.3.0
 BuildRequires:	ccrtp-devel >= 1.3.4
 BuildRequires:	qt3-devel
-BuildRequires:	qt4-linguist
 BuildRequires:	libsndfile-devel
 BuildRequires:	speex-devel
 BuildRequires:	boost-devel
@@ -42,6 +41,8 @@ a network using a SIP proxy to route your calls.
 %setup -q
 
 %build
+export QTDIR=%{qt3dir}
+export PATH=%{qt3dir}/bin:${PATH}
 %if %kde
 %configure_kde3 --with-zrtp --with-kde
 %else
