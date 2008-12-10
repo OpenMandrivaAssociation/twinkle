@@ -58,7 +58,11 @@ install -m 0644 src/gui/images/twinkle32.png %{buildroot}%{_iconsdir}/hicolor/32
 install -m 0644 src/gui/images/twinkle16.png %{buildroot}%{_iconsdir}/hicolor/16x16/apps/%{name}.png
 
 mkdir -p %{buildroot}%{_datadir}/applications
+
+# correct icon syntax
 sed -i -e 's,%{_datadir}/%{name}/twinkle48.png,%{name},g' %{name}.desktop
+# run via soundwrapper
+sed -i -e 's,Exec=%{name},Exec=soundwrapper %{_bindir}/%{name},g' %{name}.desktop
 desktop-file-install --vendor="" \
 	--dir %{buildroot}%{_datadir}/applications/ \
 	--remove-category="KDE" \
