@@ -6,8 +6,8 @@
 
 Name: 	 	twinkle
 Summary: 	Voice Over IP phone using SIP for QT
-Version: 	1.4.1
-Release: 	%{mkrel 2}
+Version: 	1.4.2
+Release: 	%{mkrel 1}
 Source0:	http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.gz
 URL:		http://www.xs4all.nl/~mfnboer/twinkle/
 License:	GPLv2+
