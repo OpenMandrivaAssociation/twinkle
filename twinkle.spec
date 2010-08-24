@@ -1,13 +1,7 @@
-# build with KDE address book support? - disabled while it only
-# supports KDE 3
-%define kde	0
-
-%define _requires_exceptions libresolv.so.2
-
 Name: 	 	twinkle
 Summary: 	Voice Over IP phone using SIP for QT
 Version: 	1.4.2
-Release: 	%{mkrel 4}
+Release: 	%{mkrel 5}
 Source0:	http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.gz
 URL:		http://www.xs4all.nl/~mfnboer/twinkle/
 License:	GPLv2+
@@ -25,10 +19,6 @@ BuildRequires:	alsa-lib-devel
 BuildRequires:	file-devel
 BuildRequires:	libilbc-devel
 BuildRequires:	readline-devel
-%if %kde
-BuildRequires:	kdelibs-common
-BuildRequires:	kdepim-devel
-%endif
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
@@ -41,11 +31,7 @@ a network using a SIP proxy to route your calls.
 %build
 export QTDIR=%{qt3dir}
 export PATH=%{qt3dir}/bin:${PATH}
-%if %kde
-%configure_kde3 --with-zrtp --with-kde
-%else
 %configure2_5x --with-zrtp --without-kde
-%endif
 %make
 										
 %install
