@@ -1,24 +1,25 @@
 Name: 	 	twinkle
 Summary: 	Voice Over IP phone using SIP for QT
 Version: 	1.4.2
-Release: 	%{mkrel 6}
-Source0:	http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.gz
-URL:		http://www.xs4all.nl/~mfnboer/twinkle/
+Release: 	7
 License:	GPLv2+
 Group:		Communications
-BuildRoot:	%{_tmppath}/%{name}-buildroot
-BuildRequires:	libCommonC++-devel >= 1.3.0
-BuildRequires:	ccrtp-devel >= 1.3.4
-BuildRequires:	qt3-devel
-BuildRequires:	libsndfile-devel
-BuildRequires:	speex-devel
-BuildRequires:	boost-devel
-BuildRequires:	libzrtpcpp-devel
+URL:		http://www.xs4all.nl/~mfnboer/twinkle/
+Source0:	http://www.xs4all.nl/~mfnboer/twinkle/download/%{name}-%{version}.tar.gz
+Patch0:		twinkle-1.4.2_libccrtp1.patch
+
 BuildRequires:	desktop-file-utils
-BuildRequires:	alsa-lib-devel
-BuildRequires:	file-devel
+BuildRequires:	boost-devel
 BuildRequires:	libilbc-devel
+BuildRequires:	magic-devel
+BuildRequires:	qt3-devel
 BuildRequires:	readline-devel
+BuildRequires:	pkgconfig(alsa)
+BuildRequires:	pkgconfig(libccext2)
+BuildRequires:	pkgconfig(libccrtp)
+BuildRequires:	pkgconfig(libzrtpcpp)
+BuildRequires:	pkgconfig(sndfile)
+BuildRequires:	pkgconfig(speex)
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
@@ -27,15 +28,18 @@ a network using a SIP proxy to route your calls.
 
 %prep
 %setup -q
+%apply_patches
 
 %build
+#autoreconf -fi
 export QTDIR=%{qt3dir}
 export PATH=%{qt3dir}/bin:${PATH}
-%configure2_5x --with-zrtp --without-kde
+%configure2_5x \
+	--with-zrtp \
+	--without-kde
 %make
 										
 %install
-rm -rf %{buildroot}
 %makeinstall_std
 
 #icons
@@ -55,27 +59,10 @@ desktop-file-install --vendor="" \
 	--remove-category="KDE" \
 	%{name}.desktop
 
-%find_lang %{name}
-
-%clean
-rm -rf %{buildroot}
-
-%if %mdkversion < 200900
-%post
-%update_menus
-%update_icon_cache hicolor
-%endif
-		
-%if %mdkversion < 200900
-%postun
-%clean_menus
-%update_icon_cache hicolor
-%endif
-
-%files -f %{name}.lang
-%defattr(-,root,root)
+%files 
 %doc AUTHORS ChangeLog NEWS README THANKS
 %{_bindir}/%{name}
 %{_datadir}/%{name}
 %{_iconsdir}/hicolor/*/apps/%{name}.png
 %{_datadir}/applications/*.desktop
+
