@@ -13,9 +13,14 @@ BuildRequires:	desktop-file-utils
 BuildRequires:	boost-devel
 BuildRequires:	libilbc-devel
 BuildRequires:	magic-devel
+BuildRequires:	cmake
+BuildRequires:	cmake(ECM)
 BuildRequires:	cmake(Qt5Core)
 BuildRequires:	cmake(Qt5Gui)
 BuildRequires:	cmake(Qt5Widgets)
+BuildRequires:	cmake(Qt5Declarative)
+BuildRequires:	cmake(Qt5Quick)
+BuildRequires:	ninja
 BuildRequires:	readline-devel
 BuildRequires:	pkgconfig(alsa)
 BuildRequires:	pkgconfig(libccext2)
@@ -23,7 +28,12 @@ BuildRequires:	pkgconfig(libccrtp)
 BuildRequires:	pkgconfig(libzrtpcpp)
 BuildRequires:	pkgconfig(sndfile)
 BuildRequires:	pkgconfig(speex)
+BuildRequires:	pkgconfig(speexdsp)
 BuildRequires:	pkgconfig(ucommon)
+BuildRequires:	pkgconfig(libxml-2.0)
+BuildRequires:	bison
+BuildRequires:	flex
+BuildRequires:	%{_lib}qt5quick-devel
 
 %description
 Twinkle is a soft phone for your voice over IP communcations using the SIP
