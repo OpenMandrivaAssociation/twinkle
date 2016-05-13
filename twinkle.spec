@@ -8,6 +8,7 @@ Url:		http://twinkle.dolezel.info/
 Source0:	https://github.com/LubosD/twinkle/archive/v%{version}.tar.gz
 Patch0:		twinkle-1.9.0-ucommon7.patch
 Patch1:		twinkle-1.9.0-warnings.patch
+Patch2:		twinkle-1.9.0-ilbc-2.0.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	boost-devel
 BuildRequires:	libilbc-devel
@@ -45,7 +46,8 @@ a network using a SIP proxy to route your calls.
 %cmake_kde5 \
 	-DWITH_QT5:BOOL=ON \
 	-DWITH_SPEEX:BOOL=ON \
-	-DWITH_ZRTP:BOOL=ON
+	-DWITH_ZRTP:BOOL=ON \
+	-DWITH_ILBC:BOOL=ON
 
 %build
 %ninja -C build
