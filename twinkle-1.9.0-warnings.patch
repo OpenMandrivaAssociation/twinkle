@@ -1,0 +1,11 @@
+--- twinkle-1.9.0/src/parser/hdr_privacy.h.omv~	2016-05-13 01:34:42.451346729 +0200
++++ twinkle-1.9.0/src/parser/hdr_privacy.h	2016-05-13 01:34:46.443322555 +0200
+@@ -20,7 +20,7 @@
+ // Privacy header
+ 
+ #ifndef _H_HDR_PRIVACY
+-#define _H_HDR_PRICACY
++#define _H_HDR_PRIVACY
+ 
+ #include <list>
+ #include <string>
