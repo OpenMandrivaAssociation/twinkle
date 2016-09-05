@@ -1,13 +1,11 @@
 Summary:	Voice Over IP phone using SIP for QT
 Name:		twinkle
-Version:	1.9.0
+Version:	1.10.0
 Release:	1
 License:	GPLv2+
 Group:		Communications
 Url:		http://twinkle.dolezel.info/
 Source0:	https://github.com/LubosD/twinkle/archive/v%{version}.tar.gz
-Patch0:		twinkle-1.9.0-ucommon7.patch
-Patch1:		twinkle-1.9.0-warnings.patch
 Patch2:		twinkle-1.9.0-ilbc-2.0.patch
 BuildRequires:	desktop-file-utils
 BuildRequires:	boost-devel
@@ -18,7 +16,7 @@ BuildRequires:	cmake(ECM)
 BuildRequires:	cmake(Qt5Core)
 BuildRequires:	cmake(Qt5Gui)
 BuildRequires:	cmake(Qt5Widgets)
-BuildRequires:	cmake(Qt5Declarative)
+BuildRequires:	cmake(Qt5Quick)
 BuildRequires:	cmake(Qt5Quick)
 BuildRequires:	ninja
 BuildRequires:	readline-devel
@@ -44,9 +42,10 @@ a network using a SIP proxy to route your calls.
 %{_bindir}/%{name}
 %{_bindir}/%{name}-console
 %{_datadir}/%{name}
-%{_iconsdir}/hicolor/*/apps/%{name}.png
+%{_iconsdir}/hicolor/*/apps/%{name}.*
 %{_datadir}/applications/*.desktop
 %{_datadir}/pixmaps/twinkle.png
+%{_mandir}/man1/*
 
 #----------------------------------------------------------------------------
 
