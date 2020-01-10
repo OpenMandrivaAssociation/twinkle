@@ -51,7 +51,7 @@ a network using a SIP proxy to route your calls.
 
 %prep
 %setup -q
-%apply_patches
+%autopatch -p1
 %cmake_kde5 \
 	-DWITH_QT5:BOOL=ON \
 	-DWITH_SPEEX:BOOL=ON \
