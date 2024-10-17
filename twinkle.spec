@@ -4,7 +4,7 @@ Version:	1.10.0
 Release:	1
 License:	GPLv2+
 Group:		Communications
-Url:		http://twinkle.dolezel.info/
+Url:		https://twinkle.dolezel.info/
 Source0:	https://github.com/LubosD/twinkle/archive/v%{version}.tar.gz
 Patch2:		twinkle-1.9.0-ilbc-2.0.patch
 BuildRequires:	desktop-file-utils
