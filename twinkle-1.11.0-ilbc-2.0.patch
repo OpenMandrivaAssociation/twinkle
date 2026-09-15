@@ -1,12 +1,24 @@
---- twinkle-1.9.0/cmake/FindIlbc.cmake.0002~	2015-07-13 21:14:07.000000000 +0200
-+++ twinkle-1.9.0/cmake/FindIlbc.cmake	2016-05-13 03:08:02.759343216 +0200
-@@ -1,4 +1,4 @@
+--- twinkle-1.11.0.orig/cmake/FindIlbc.cmake	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/cmake/FindIlbc.cmake	2026-09-15 15:31:51.895844350 +0200
+@@ -1,7 +1,7 @@
+ include (CMakePushCheckState)
+ include (CheckCXXSourceCompiles)
+ 
 -FIND_PATH(ILBC_INCLUDE_DIR ilbc/iLBC_decode.h)
 +FIND_PATH(ILBC_INCLUDE_DIR ilbc.h)
  FIND_LIBRARY(ILBC_LIBRARIES NAMES ilbc)
  
  IF(ILBC_INCLUDE_DIR AND ILBC_LIBRARIES)
-@@ -7,7 +7,7 @@ ENDIF(ILBC_INCLUDE_DIR AND ILBC_LIBRARIE
+@@ -13,7 +13,7 @@
+ 	LIST(APPEND CMAKE_REQUIRED_LIBRARIES "-lilbc")
+ 	SET(CMAKE_REQUIRED_QUIET TRUE)
+ 	CHECK_CXX_SOURCE_COMPILES("
+-		#include <ilbc/iLBC_decode.h>
++		#include <ilbc.h>
+ 
+ 		int main() {
+ 			iLBC_Dec_Inst_t *iLBCdec_inst;
+@@ -26,7 +26,7 @@
  
  IF(ILBC_FOUND)
  	IF (NOT Ilbc_FIND_QUIETLY)
@@ -15,9 +27,9 @@
  		MESSAGE(STATUS "Found ilbc library: ${ILBC_LIBRARIES}")
  	ENDIF (NOT Ilbc_FIND_QUIETLY)
  ELSE(ILBC_FOUND)
---- twinkle-1.9.0/src/audio/audio_decoder.cpp.0002~	2015-07-13 21:14:07.000000000 +0200
-+++ twinkle-1.9.0/src/audio/audio_decoder.cpp	2016-05-13 03:08:02.759343216 +0200
-@@ -25,7 +25,13 @@
+--- twinkle-1.11.0.orig/src/audio/audio_decoder.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/audio/audio_decoder.cpp	2026-09-15 15:32:24.347167605 +0200
+@@ -24,7 +24,13 @@
  #ifndef HAVE_ILBC_CPP
  extern "C" {
  #endif
@@ -32,7 +44,7 @@
  #ifndef HAVE_ILBC_CPP
  }
  #endif
-@@ -279,18 +285,18 @@ uint16 t_ilbc_audio_decoder::decode(uint
+@@ -278,18 +284,18 @@
  		int16 *pcm_buf, uint16 pcm_buf_size)
  {
  	float sample;
@@ -54,7 +66,7 @@
  		_last_received_ptime = 30;
  	}
  	
-@@ -307,8 +313,8 @@ uint16 t_ilbc_audio_decoder::decode(uint
+@@ -306,8 +312,8 @@
  }
  
  uint16 t_ilbc_audio_decoder::conceal(int16 *pcm_buf, uint16 pcm_buf_size) {
@@ -65,9 +77,9 @@
  	int block_len;
  	
  	if (_last_received_ptime == 0) return 0;
---- twinkle-1.9.0/src/audio/audio_decoder.h.0002~	2015-07-13 21:14:07.000000000 +0200
-+++ twinkle-1.9.0/src/audio/audio_decoder.h	2016-05-13 03:08:02.759343216 +0200
-@@ -46,7 +46,7 @@ extern "C" {
+--- twinkle-1.11.0.orig/src/audio/audio_decoder.h	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/audio/audio_decoder.h	2026-09-15 15:31:51.885631651 +0200
+@@ -52,7 +52,7 @@
  #ifndef HAVE_ILBC_CPP
  extern "C" {
  #endif
@@ -76,9 +88,9 @@
  #ifndef HAVE_ILBC_CPP
  }
  #endif
---- twinkle-1.9.0/src/audio/audio_encoder.cpp.0002~	2015-07-13 21:14:07.000000000 +0200
-+++ twinkle-1.9.0/src/audio/audio_encoder.cpp	2016-05-13 03:08:59.976995712 +0200
-@@ -24,7 +24,11 @@
+--- twinkle-1.11.0.orig/src/audio/audio_encoder.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/audio/audio_encoder.cpp	2026-09-15 15:32:24.340059253 +0200
+@@ -23,7 +23,11 @@
  #ifndef HAVE_ILBC_CPP
  extern "C" {
  #endif
@@ -91,7 +103,7 @@
  #ifndef HAVE_ILBC_CPP
  }
  #endif
-@@ -264,13 +268,8 @@ uint16 t_ilbc_audio_encoder::encode(int1
+@@ -271,13 +275,8 @@
  	assert(nsamples == _ilbc_encoder.blockl);
  	
  	silence = false;
@@ -106,9 +118,9 @@
  	
  	return _ilbc_encoder.no_of_bytes;
  }
---- twinkle-1.9.0/src/audio/audio_encoder.h.0002~	2015-07-13 21:14:07.000000000 +0200
-+++ twinkle-1.9.0/src/audio/audio_encoder.h	2016-05-13 03:08:02.759343216 +0200
-@@ -45,7 +45,7 @@ extern "C" {
+--- twinkle-1.11.0.orig/src/audio/audio_encoder.h	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/audio/audio_encoder.h	2026-09-15 15:31:51.885631651 +0200
+@@ -51,7 +51,7 @@
  #ifndef HAVE_ILBC_CPP
  extern "C" {
  #endif

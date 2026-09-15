@@ -1,0 +1,379 @@
+diff -Nru twinkle-1.11.0.orig/CMakeLists.txt twinkle-1.11.0/CMakeLists.txt
+--- twinkle-1.11.0.orig/CMakeLists.txt	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/CMakeLists.txt	2026-09-15 15:39:14.549373198 +0200
+@@ -1,10 +1,14 @@
+-cmake_minimum_required(VERSION 2.8.10...3.22 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.16...3.31 FATAL_ERROR)
+ 
+ project(twinkle)
+ 
+ set(PRODUCT_VERSION "1.11.0")
+ set(PRODUCT_DATE    "February 18, 2022")
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
++set(CMAKE_CXX_STANDARD 17)
++set(CMAKE_CXX_STANDARD_REQUIRED ON)
++set(CMAKE_CXX_EXTENSIONS OFF)
++# Bundled GSM and other old C++ still use the 'register' storage class.
++add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-register>)
+ # Add -DDEBUG for non-release builds, or uCommon will unilaterally define NDEBUG
+ # (https://lists.gnu.org/archive/html/bug-commoncpp/2019-12/msg00000.html)
+ set_directory_properties(PROPERTIES
+@@ -16,10 +20,10 @@
+ OPTION(WITH_SPEEX		"Enable the Speex codec" OFF)
+ OPTION(WITH_ILBC		"Enable the iLBC codec" OFF)
+ OPTION(WITH_ALSA		"Enable ALSA support" ON)
+-CMAKE_DEPENDENT_OPTION(WITH_DIAMONDCARD	"Enable Diamondcard integration" ON "WITH_QT5" OFF)
+-OPTION(WITH_QT5			"Enable Qt 5 GUI" ON)
+-CMAKE_DEPENDENT_OPTION(WITH_DBUS "Enable use of QtDBus (GUI only)" ON "WITH_QT5" OFF)
+-CMAKE_DEPENDENT_OPTION(WITH_AKONADI "Enable Akonadi support" OFF WITH_QT5 OFF)
++CMAKE_DEPENDENT_OPTION(WITH_DIAMONDCARD	"Enable Diamondcard integration" ON "WITH_QT6" OFF)
++OPTION(WITH_QT6			"Enable Qt 6 GUI" ON)
++CMAKE_DEPENDENT_OPTION(WITH_DBUS "Enable use of QtDBus (GUI only)" ON "WITH_QT6" OFF)
++CMAKE_DEPENDENT_OPTION(WITH_AKONADI "Enable Akonadi support" OFF WITH_QT6 OFF)
+ OPTION(WITH_G729		"Enable G.729A support" OFF)
+ OPTION(WITH_GSM			"Use external GSM library" OFF)
+ 
+@@ -77,28 +81,22 @@
+ 	${CCRTP_INCLUDE_DIR}
+ )
+ 
+-if (WITH_QT5)
+-	find_package(Qt5Widgets REQUIRED)
+-	find_package(Qt5LinguistTools REQUIRED)
+-	find_package(Qt5Quick REQUIRED)
+-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${Qt5Quick_EXECUTABLE_COMPILE_FLAGS}")
+-	include_directories(${Qt5Widgets_INCLUDES} ${Qt5Quick_INCLUDES})
+-	add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Quick_DEFINITIONS})
++if (WITH_QT6)
++	find_package(Qt6 REQUIRED COMPONENTS Widgets Quick LinguistTools)
++	set(CMAKE_AUTOMOC ON)
+ 
+ 	if (WITH_DBUS)
+-		find_package(Qt5DBus REQUIRED)
++		find_package(Qt6 REQUIRED COMPONENTS DBus)
+ 		set(HAVE_DBUS TRUE)
+-		include_directories(${Qt5DBus_INCLUDES})
+ 	endif (WITH_DBUS)
+ 
+ 	if (WITH_AKONADI)
+-		find_package(KF5Akonadi REQUIRED)
+-		find_package(KF5Contacts REQUIRED)
++		find_package(KPim6Akonadi REQUIRED)
++		find_package(KF6Contacts REQUIRED)
+ 		message(STATUS "Akonadi OK")
+ 		set(HAVE_AKONADI TRUE)
+-		include_directories(${KF5Akonadi_INCLUDES} ${KF5Contacts_INCLUDES})
+ 	endif (WITH_AKONADI)
+-endif (WITH_QT5)
++endif (WITH_QT6)
+ 
+ if (WITH_ALSA)
+ 	find_package(ALSA)
+diff -Nru twinkle-1.11.0.orig/src/CMakeLists.txt twinkle-1.11.0/src/CMakeLists.txt
+--- twinkle-1.11.0.orig/src/CMakeLists.txt	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/CMakeLists.txt	2026-09-15 15:31:01.184808595 +0200
+@@ -101,9 +101,9 @@
+ 	list(APPEND twinkle_LIBS ${GSM_LIBRARY})
+ endif (WITH_GSM)
+ 
+-if (WITH_QT5)
++if (WITH_QT6)
+ 	add_subdirectory(gui)
+-endif (WITH_QT5)
++endif (WITH_QT6)
+ 
+ target_link_libraries(twinkle-console ${twinkle_LIBS})
+ 
+diff -Nru twinkle-1.11.0.orig/src/gui/CMakeLists.txt twinkle-1.11.0/src/gui/CMakeLists.txt
+--- twinkle-1.11.0.orig/src/gui/CMakeLists.txt	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/CMakeLists.txt	2026-09-15 15:40:03.864604435 +0200
+@@ -45,20 +45,21 @@
+ 	lang/twinkle_sv.ts
+ )
+ 
+-qt5_wrap_ui(
++qt6_wrap_ui(
+ 	twinkle_UIS
+ 	${twinkle_ui_SRC}
++	OPTIONS --connections string
+ )
+ 
+-qt5_add_resources(twinkle_QRC icons.qrc qml/qml.qrc)
++qt6_add_resources(twinkle_QRC icons.qrc qml/qml.qrc)
+ 
+-qt5_add_translation(twinkle_LANG
++qt6_add_translation(twinkle_LANG
+ 	${twinkle_lang_SRC}
+ )
+ 
+-set(qt_LIBS Qt5::Widgets Qt5::Quick)
++set(qt_LIBS Qt6::Widgets Qt6::Quick)
+ if (WITH_DBUS)
+-	list(APPEND qt_LIBS Qt5::DBus)
++	list(APPEND qt_LIBS Qt6::DBus)
+ endif (WITH_DBUS)
+ 
+ set(CMAKE_AUTOMOC ON)
+@@ -113,9 +114,9 @@
+ endif (WITH_DBUS)
+ if (WITH_AKONADI)
+ 	list(APPEND qt_LIBS
+-		KF5::AkonadiCore
+-		KF5::AkonadiWidgets
+-		KF5::Contacts)
++		KPim6::AkonadiCore
++		KPim6::AkonadiWidgets
++		KF6::Contacts)
+ 	list(APPEND TWINKLE_GUI-SRCS
+ 		akonadiaddressbook.cpp
+ 		kcontactstablemodel.cpp)
+diff -Nru twinkle-1.11.0.orig/src/gui/addresstablemodel.cpp twinkle-1.11.0/src/gui/addresstablemodel.cpp
+--- twinkle-1.11.0.orig/src/gui/addresstablemodel.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/addresstablemodel.cpp	2026-09-15 15:31:35.530702274 +0200
+@@ -22,7 +22,7 @@
+ AddressTableModel::AddressTableModel(QObject *parent, const list<t_address_card>& data)
+ 	: QAbstractTableModel(parent)
+ {
+-	m_data = QList<t_address_card>::fromStdList(data);
++	m_data = QList<t_address_card>(data.begin(), data.end());
+ }
+ 
+ int AddressTableModel::rowCount(const QModelIndex &parent) const
+diff -Nru twinkle-1.11.0.orig/src/gui/gui.cpp twinkle-1.11.0/src/gui/gui.cpp
+--- twinkle-1.11.0.orig/src/gui/gui.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/gui.cpp	2026-09-15 15:40:30.052665431 +0200
+@@ -68,7 +68,7 @@
+ #include "qsize.h"
+ #include "qsizepolicy.h"
+ #include "qstring.h"
+-#include "qtextcodec.h"
++#include <QStringDecoder>
+ #include "qtooltip.h"
+ #include <QSettings>
+ 
+@@ -2714,9 +2714,9 @@
+ 		string charset = r->hdr_content_type.media.charset;
+ 		if (!charset.empty() && cmp_nocase(charset, "utf-8") != 0) {
+ 			// Try to decode the text
+-			QTextCodec *c = QTextCodec::codecForName(charset.c_str());
+-			if (c) {
+-                text = c->toUnicode(text.c_str()).toStdString();
++			QStringDecoder decoder(charset.c_str());
++			if (decoder.isValid()) {
++                text = QString(decoder.decode(QByteArray::fromStdString(text))).toStdString();
+ 			} else {
+ 				log_file->write_header(
+ 						"t_gui::cb_message_request",
+diff -Nru twinkle-1.11.0.orig/src/gui/historyform.cpp twinkle-1.11.0/src/gui/historyform.cpp
+--- twinkle-1.11.0.orig/src/gui/historyform.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/historyform.cpp	2026-09-15 15:40:30.050133649 +0200
+@@ -127,7 +127,7 @@
+     std::list<t_call_record> history;
+ 
+     call_history->get_history(history);
+-    m_history = QList<t_call_record>::fromStdList(history);
++    m_history = QList<t_call_record>(history.begin(), history.end());
+ 
+     for (int x = 0; x < m_history.size(); x++) {
+         const t_call_record* cr = &m_history[x];
+@@ -177,7 +177,7 @@
+             {
+                 case HISTCOL_TIMESTAMP:
+                 {
+-                    m_model->setData(index, QDateTime::fromTime_t(cr->time_start));
++                    m_model->setData(index, QDateTime::fromSecsSinceEpoch(cr->time_start));
+                     break;
+                 }
+                 case HISTCOL_DIRECTION:
+diff -Nru twinkle-1.11.0.orig/src/gui/incoming_call_popup.cpp twinkle-1.11.0/src/gui/incoming_call_popup.cpp
+--- twinkle-1.11.0.orig/src/gui/incoming_call_popup.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/incoming_call_popup.cpp	2026-09-15 15:31:24.334033416 +0200
+@@ -1,6 +1,7 @@
+ #include "incoming_call_popup.h"
+-#include <QDesktopWidget>
++#include <QScreen>
+ #include <QApplication>
++#include <QGuiApplication>
+ #include <QQmlContext>
+ #include <QSettings>
+ 
+@@ -41,20 +42,21 @@
+ 
+ void IncomingCallPopup::positionWindow()
+ {
+-	QDesktopWidget* desktop = qApp->desktop();
++	QScreen *screen = QGuiApplication::primaryScreen();
++	const QRect geom = screen ? screen->availableGeometry() : QRect();
+ 	int x, y;
+ 	int defaultX, defaultY;
+ 
+-	defaultX = desktop->width()/2 - m_view->width()/2;
+-	defaultY = desktop->height()/2 - m_view->height()/2;
++	defaultX = geom.x() + geom.width()/2 - m_view->width()/2;
++	defaultY = geom.y() + geom.height()/2 - m_view->height()/2;
+ 
+ 	x = g_gui_state->value("incoming_popup/x", defaultX).toInt();
+ 	y = g_gui_state->value("incoming_popup/y", defaultY).toInt();
+ 
+ 	// Reset position if off screen
+-	if (x > desktop->width() || x < 0)
++	if (x > geom.right() || x < geom.left())
+ 		x = defaultX;
+-	if (y > desktop->height() || y < 0)
++	if (y > geom.bottom() || y < geom.top())
+ 		y = defaultY;
+ 
+ 	m_view->setPosition(x, y);
+diff -Nru twinkle-1.11.0.orig/src/gui/main.cpp twinkle-1.11.0/src/gui/main.cpp
+--- twinkle-1.11.0.orig/src/gui/main.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/main.cpp	2026-09-15 15:31:35.542206349 +0200
+@@ -26,7 +26,6 @@
+ 
+ #include <qapplication.h>
+ #include <qtranslator.h>
+-#include <qtextcodec.h>
+ #include <QSettings>
+ #include <QDir>
+ 
+@@ -528,7 +527,7 @@
+ 			QString(sys_config->get_dir_lang().c_str()));
+ 		qa->installTranslator(appTranslator);
+ 		
+-		qtTranslator->load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
++		qtTranslator->load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+ 		qa->installTranslator(qtTranslator);
+ 
+ 		qa->setQuitOnLastWindowClosed(false);
+diff -Nru twinkle-1.11.0.orig/src/gui/messageform.h twinkle-1.11.0/src/gui/messageform.h
+--- twinkle-1.11.0.orig/src/gui/messageform.h	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/messageform.h	2026-09-15 15:31:35.531943709 +0200
+@@ -4,7 +4,6 @@
+ #include "im/msg_session.h"
+ #include "phone.h"
+ #include <QLabel>
+-#include <QtCore/QStringRef>
+ #include "user.h"
+ #include "ui_messageform.h"
+ #include <QMainWindow>
+diff -Nru twinkle-1.11.0.orig/src/gui/mphoneform.cpp twinkle-1.11.0/src/gui/mphoneform.cpp
+--- twinkle-1.11.0.orig/src/gui/mphoneform.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/mphoneform.cpp	2026-09-15 15:31:24.334033416 +0200
+@@ -38,7 +38,7 @@
+ #include <QTextEdit>
+ #include <QCheckBox>
+ #include <QApplication>
+-#include <QDesktopWidget>
++#include <QScreen>
+ #include "gui.h"
+ #include <QPixmap>
+ #include <QIcon>
+@@ -2843,7 +2843,7 @@
+     } else if (statCfLabel->testAttribute(Qt::WA_UnderMouse)) {
+ 		srvRedirect();
+     } else if (statMWILabel->testAttribute(Qt::WA_UnderMouse)) {
+-		popupMenuVoiceMail(e->globalPos());
++		popupMenuVoiceMail(e->globalPosition().toPoint());
+     } else if (statMissedLabel->testAttribute(Qt::WA_UnderMouse)) {
+ 		// Open the history form, when the user clicks on the 
+ 		// missed calls indication.
+diff -Nru twinkle-1.11.0.orig/src/gui/osd.cpp twinkle-1.11.0/src/gui/osd.cpp
+--- twinkle-1.11.0.orig/src/gui/osd.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/osd.cpp	2026-09-15 15:31:24.334033416 +0200
+@@ -1,9 +1,10 @@
+ #include "osd.h"
+ #include <QtDebug>
+ 
+-#include <QDesktopWidget>
++#include <QScreen>
+ #include <QSettings>
+ #include <QApplication>
++#include <QGuiApplication>
+ #include <QQuickView>
+ #include <QQuickItem>
+ #include <QQmlContext>
+@@ -46,20 +47,21 @@
+ 
+ void OSD::positionWindow()
+ {
+-	QDesktopWidget* desktop = QApplication::desktop();
++	QScreen *screen = QGuiApplication::primaryScreen();
++	const QRect geom = screen ? screen->availableGeometry() : QRect();
+ 	int x, y;
+ 	int defaultX, defaultY;
+ 
+-	defaultX = desktop->width() - this->width() - 10;
+-	defaultY = 10;
++	defaultX = geom.width() - this->width() - 10;
++	defaultY = geom.top() + 10;
+ 
+ 	x = g_gui_state->value("osd/x", defaultX).toInt();
+ 	y = g_gui_state->value("osd/y", defaultY).toInt();
+ 
+ 	// Reset position if off screen
+-	if (x > desktop->width() || x < 0)
++	if (x > geom.width() || x < 0)
+ 		x = defaultX;
+-	if (y > desktop->height() || y < 0)
++	if (y > geom.height() || y < 0)
+ 		y = defaultY;
+ 
+ 	m_view->setPosition(x, y);
+diff -Nru twinkle-1.11.0.orig/src/gui/qml/ImageButton.qml twinkle-1.11.0/src/gui/qml/ImageButton.qml
+--- twinkle-1.11.0.orig/src/gui/qml/ImageButton.qml	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/qml/ImageButton.qml	2026-09-15 15:31:51.885631651 +0200
+@@ -1,4 +1,4 @@
+-import QtQuick 2.0
++import QtQuick
+ 
+ Rectangle {
+ 
+diff -Nru twinkle-1.11.0.orig/src/gui/qml/TextImageButton.qml twinkle-1.11.0/src/gui/qml/TextImageButton.qml
+--- twinkle-1.11.0.orig/src/gui/qml/TextImageButton.qml	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/qml/TextImageButton.qml	2026-09-15 15:31:51.885631651 +0200
+@@ -1,4 +1,4 @@
+-import QtQuick 2.0
++import QtQuick
+ 
+ Rectangle {
+     id: backgroundRect
+diff -Nru twinkle-1.11.0.orig/src/gui/qml/incoming_call.qml twinkle-1.11.0/src/gui/qml/incoming_call.qml
+--- twinkle-1.11.0.orig/src/gui/qml/incoming_call.qml	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/qml/incoming_call.qml	2026-09-15 15:31:51.885631651 +0200
+@@ -1,4 +1,4 @@
+-import QtQuick 2.0
++import QtQuick
+ 
+ Rectangle {
+     id: rectanglePopup
+diff -Nru twinkle-1.11.0.orig/src/gui/qml/osd.qml twinkle-1.11.0/src/gui/qml/osd.qml
+--- twinkle-1.11.0.orig/src/gui/qml/osd.qml	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/qml/osd.qml	2026-09-15 15:31:51.885631651 +0200
+@@ -1,4 +1,4 @@
+-import QtQuick 2.0
++import QtQuick
+ 
+ Rectangle {
+     id: rectangleOsd
+diff -Nru twinkle-1.11.0.orig/src/gui/transferform.h twinkle-1.11.0/src/gui/transferform.h
+--- twinkle-1.11.0.orig/src/gui/transferform.h	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/transferform.h	2026-09-15 15:31:35.531943709 +0200
+@@ -6,7 +6,6 @@
+ #include "getaddressform.h"
+ #include "phone.h"
+ #include "protocol.h"
+-#include <QtCore/QStringRef>
+ #include "sockets/url.h"
+ #include "user.h"
+ #include "ui_transferform.h"
+diff -Nru twinkle-1.11.0.orig/src/gui/wizardform.cpp twinkle-1.11.0/src/gui/wizardform.cpp
+--- twinkle-1.11.0.orig/src/gui/wizardform.cpp	2026-09-14 21:32:43.000000000 +0200
++++ twinkle-1.11.0/src/gui/wizardform.cpp	2026-09-15 15:31:35.530702274 +0200
+@@ -98,7 +98,7 @@
+ 			// Skip comment
+ 			if (entry[0] == '#') continue;
+ 			
+-            QStringList l = entry.split(";", QString::KeepEmptyParts);
++            QStringList l = entry.split(";", Qt::KeepEmptyParts);
+ 			
+ 			// Skip invalid lines
+ 			if (l.size() != 4) continue;
